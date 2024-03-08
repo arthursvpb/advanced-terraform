@@ -27,3 +27,72 @@ variable "private_google_access" {
   type = bool
   default = true
 }
+
+variable "firewall-ports" {
+  type = list
+  default = ["80", "8080", "1000-2000", "22"]
+}
+
+variable "compute-source-tags" {
+    type = list
+    default = ["web"]
+}
+
+variable "target_environment" {
+  default = "DEV"
+}
+
+variable "environment_list" {
+  type = list(string)
+  default = ["DEV","QA","STAGE","PROD"]
+}
+
+variable "environment_map" {
+  type = map(string)
+  default = {
+    "DEV" = "dev",
+    "QA" = "qa",
+    "STAGE" = "stage",
+    "PROD" = "prod"
+  }
+}
+
+variable "environment_machine_type" {
+  type = map(string)
+  default = {
+    "DEV" = "e2-micro",
+    "QA" = "e2-micro",
+    "STAGE" = "e2-micro",
+    "PROD" = "e2-medium"
+  }
+}
+
+variable "environment_instance_settings" {
+  type = map(object({machine_type=string, labels=map(string)}))
+  default = {
+    "DEV" = {
+      machine_type = "e2-micro"
+      labels = {
+        environment = "dev"
+      }
+    },
+   "QA" = {
+      machine_type = "e2-micro"
+      labels = {
+        environment = "qa"
+      }
+    },
+    "STAGE" = {
+      machine_type = "e2-micro"
+      labels = {
+        environment = "stage"
+      }
+    },
+    "PROD" = {
+      machine_type = "e2-medium"
+      labels = {
+        environment = "prod"
+      }
+    }
+  }
+}
