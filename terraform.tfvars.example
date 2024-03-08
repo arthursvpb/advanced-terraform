@@ -1,0 +1,2 @@
+project-id = "advanced-terraform-416413"
+subnet-cidr = "10.127.0.0/24"
