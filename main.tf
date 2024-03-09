@@ -150,7 +150,7 @@ resource "google_sql_database_instance" "cloudsql" {
   region           = "us-central1"
 
   settings {
-    tier = "db-f1-micro"
+    tier = "db-e2-micro"
   }
   deletion_protection = false
 }
