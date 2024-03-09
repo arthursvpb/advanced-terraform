@@ -35,6 +35,16 @@ resource "google_compute_firewall" "default" {
   source_tags = var.compute-source-tags
 }
 
+## BUCKETS
+resource "google_storage_bucket" "environment_buckets" {
+  for_each = toset(var.environment_list)
+  name = "${lower(each.key)}_${var.project-id}"
+  location = "US"
+  versioning {
+    enabled = true
+  }
+}
+
 ### COMPUTE
 ## NGINX PROXY
 resource "google_compute_instance" "nginx_instance" {
@@ -44,6 +54,7 @@ resource "google_compute_instance" "nginx_instance" {
     environment = var.environment_map[var.target_environment]
   }
   tags = var.compute-source-tags
+  
   boot_disk {
     initialize_params {
       image = "debian-cloud/debian-11"
@@ -59,7 +70,7 @@ resource "google_compute_instance" "nginx_instance" {
   }
 }
 
-# WEBSERVERS
+## WEBSERVERS
 resource "google_compute_instance" "web-instances" {
   count = 3
   name         = "web${count.index}"
@@ -78,6 +89,25 @@ resource "google_compute_instance" "web-instances" {
     network = data.google_compute_network.default.self_link
     subnetwork = google_compute_subnetwork.subnet-1.self_link
   }
+}
+
+## WEBSERVERS-MAP
+resource "google_compute_instance" "web-map-instances" {
+  for_each = var.environment_instance_settings
+  name = "${lower(each.key)}-web"
+  machine_type = each.value.machine_type
+  labels = each.value.labels
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-11"
+    }
+  }
+
+  network_interface {
+    network = data.google_compute_network.default.self_link
+    subnetwork = google_compute_subnetwork.subnet-1.self_link
+  }  
 }
 
 ## DB
