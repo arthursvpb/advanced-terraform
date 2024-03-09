@@ -1,38 +1,106 @@
-# Advanced Terraform
-This is the repository for the LinkedIn Learning course Advanced Terraform. The full course is available from [LinkedIn Learning][lil-course-url].
+# Terraform Quick Guide
 
-![Advanced Terraform][lil-thumbnail-url] 
+<div align="center">
+<img width="100" src="https://user-images.githubusercontent.com/25181517/183345121-36788a6e-5462-424a-be67-af1ebeda79a2.png" />
+</div>
 
-Terraform simplifies and accelerates the configuration and deployment of infrastructure, including cloud-based environments. In this project-based course, David Swersky highlights a series of advanced Terraform use cases. David goes over the steps to create a new Terraform configuration, then explores intermediate concepts like variables, looping, expression and functions, modules, and more. He explains advanced concepts, such as custom modules, defining a remote state backend, and deploying configurations across multiple environments. The course is capped with an example model for a complete Continuous Integration/Continuous Delivery pipeline for deploying Terraform configurations.
+<div align="right">
+<a href="https://www.terraform.io/">Learn More at terraform.io</a>
+</div>
 
-## Instructions
-This repository has branches for each of the videos in the course. You can use the branch pop up menu in github to switch to a specific branch and take a look at the course at that stage, or you can add `/tree/BRANCH_NAME` to the URL to go to the branch you want to access.
+Terraform automates the deployment of infrastructure through **Infrastructure as Code (IaC)**, creating and managing components across various providers via an abstraction layer.
 
-## Branches
-The branches are structured to correspond to the videos in the course. The naming convention is `CHAPTER#_MOVIE#`. As an example, the branch named `02_03` corresponds to the second chapter and the third video in that chapter. 
-Some branches will have a beginning and an end state. These are marked with the letters `b` for "beginning" and `e` for "end". The `b` branch contains the code as it is at the beginning of the movie. The `e` branch contains the code as it is at the end of the movie. The `main` branch holds the final state of the code when in the course.
+### Key Concepts:
 
-When switching from one exercise files branch to the next after making changes to the files, you may get a message like this:
+- **Providers**: Plugins for managing resources with cloud providers like AWS, Azure, Google Cloud, Docker, Kubernetes, etc.
+- **Resources**: Individual infrastructure components.
+- **Modules**: Reusable blocks of configuration, grouping related resources.
+- **Variables**: Parameters that configure resources dynamically.
+- **State**: Tracks the current state of your infrastructure.
+- **Idempotency**: Ensures operations produce the same outcome, regardless of how many times they are executed.
+- **Declarative Syntax**: You specify the desired end-state, and Terraform handles the how.
+- **Outputs**: Information about the infrastructure's provisioning.
+- **Backend**: Stores the state file remotely for team collaboration.
 
-    error: Your local changes to the following files would be overwritten by checkout:        [files]
-    Please commit your changes or stash them before you switch branches.
-    Aborting
+### Terraform vs. Ansible:
 
-To resolve this issue:
-	
-    Add changes to git using this command: git add .
-	Commit changes using this command: git commit -m "some message"
+- Terraform focuses on infrastructure provisioning.
+- Ansible specializes in software configuration on existing infrastructure.
 
+### Using Terraform (HCL - HashiCorp Configuration Language):
 
-### Instructor
+1. **Initialization**: Prepares your directory for Terraform operations.
+   ```sh
+   terraform init
+   ```
+2. **Validation**: Checks if the configuration is valid.
+   ```sh
+   terraform validate
+   ```
+3. **Formatting**: Adjusts formatting to the standard style.
+   ```sh
+   terraform fmt
+   ```
+4. **Planning**: Shows changes required to achieve the desired state.
+   ```sh
+   terraform plan
+   ```
+5. **Applying**: Applies the changes to reach the desired state.
+   ```sh
+   terraform apply
+   ```
+6. **Destruction**: Removes all resources defined in the Terraform configuration.
+   ```sh
+   terraform destroy
+   ```
 
-David Swersky 
-                            
-DevOps and enterprise architect
+### Variables and Configuration:
 
-                            
+- Define variables directly in `.tf` files or use `terraform.tfvars` for sensitive data.
+- Apply configuration with `-var` or `-var-file` during the apply step.
 
-Check out my other courses on [LinkedIn Learning](https://www.linkedin.com/learning/instructors/david-swersky).
+### Getting Started:
 
-[lil-course-url]: https://www.linkedin.com/learning/advanced-terraform-18720794?dApp=59033956
-[lil-thumbnail-url]: https://media.licdn.com/dms/image/C560DAQGfrjsVMJJlFg/learning-public-crop_675_1200/0/1673639139822?e=2147483647&v=beta&t=Po6XcY4t4DcIZ__O-16BY24eHt0MPhPODwJl90L1rs0
+#### Requirements:
+
+- AWS Bucket for `.tfstate` storage (e.g., `deal-terraform-bucket`).
+- Configure `aws.tfvars` with AWS config variables: `access_key`, `secret_key`, `token`, `region`.
+
+#### Initialization:
+
+```sh
+terraform init -var-file=aws.tfvars
+terraform init -var-file=gcloud.tfvars
+```
+
+#### Apply Configuration:
+
+```sh
+terraform apply -var-file=aws.tfvars --auto-approve
+terraform apply -var-file=gcloud.tfvars --auto-approve
+```
+
+#### Clean Up:
+
+```sh
+terraform destroy -var-file=aws.tfvars --auto-approve
+terraform destroy -var-file=gcloud.tfvars --auto-approve
+```
+
+#### Kubernetes Configuration:
+
+- AWS EKS:
+  ```sh
+  aws eks update-kubeconfig --name <your-cluster-name>
+  ```
+- Google Cloud GKE:
+  ```sh
+  gcloud container clusters get-credentials deal-cluster --region us-central1 --project <project-name>
+  ```
+
+#### Code Formatting:
+
+- Ensure consistent formatting:
+  ```sh
+  terraform fmt -recursive
+  ```
