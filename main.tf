@@ -44,6 +44,7 @@ resource "google_compute_instance" "nginx_instance" {
     environment = var.environment_map[var.target_environment]
   }
   tags = var.compute-source-tags
+ 
   boot_disk {
     initialize_params {
       image = "debian-cloud/debian-11"
@@ -136,4 +137,27 @@ resource "google_compute_instance" "mysqldb" {
     network = data.google_compute_network.default.self_link
     subnetwork = google_compute_subnetwork.subnet-1.self_link
   }  
+}
+
+resource "random_id" "db_name_suffix" {
+  byte_length = 4
+}
+
+## CLOUD SQL
+resource "google_sql_database_instance" "cloudsql" {
+  name             = "web-app-db-${random_id.db_name_suffix.hex}"
+  database_version = "MYSQL_8_0"
+  region           = "us-central1"
+
+  settings {
+    tier = "db-f1-micro"
+  }
+  deletion_protection = false
+}
+
+## CLOUD SQL USER
+resource "google_sql_user" "users" {
+  name     = var.dbusername
+  instance = google_sql_database_instance.cloudsql.name
+  password = var.dbpassword
 }
