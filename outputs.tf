@@ -8,7 +8,7 @@ output "nginx-public-ip" {
 }
 
 output "webserver-ips" {
-    value = google_compute_instance.web-instances[*].network_interface[0].network_ip
+    value = module.webservers.webserver-ips
 }
 
 output "db-private-ip" {
